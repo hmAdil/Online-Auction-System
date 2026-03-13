@@ -15,6 +15,8 @@ manager.create_auction("Gaming Laptop", 12000)
 
 clients = []
 
+last_bid_time = {}
+
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -35,6 +37,32 @@ def broadcast(message):
         except:
 
             pass
+
+
+
+def validate_message(message):
+
+    if "type" not in message:
+        return False
+
+    if message["type"] == "BID":
+
+        required = ["auction_id", "user", "amount"]
+
+        for field in required:
+
+            if field not in message:
+                return False
+
+    elif message["type"] == "GET_AUCTION":
+
+        if "auction_id" not in message:
+            return False
+
+    else:
+        return False
+
+    return True
 
 
 
@@ -62,6 +90,10 @@ def handle_client(client):
 
                 message = json.loads(msg)
 
+                if not validate_message(message):
+                    print("Invalid message rejected:", message)
+                    continue
+
                 print("Received message:", message)
 
 
@@ -86,17 +118,35 @@ def handle_client(client):
 
                 elif message["type"] == "BID":
 
+                    user = message["user"]
+
+                    if len(user) > 20 or not user.isalnum():
+                        print("Invalid username rejected:", user)
+                        continue
+
+
+                    now = time.time()
+
+                    if user in last_bid_time:
+
+                        if now - last_bid_time[user] < 1:
+                            print("Spam bid blocked:", user)
+                            continue
+
+                    last_bid_time[user] = now
+
+
                     auction = manager.get_auction(message["auction_id"])
 
                     if auction and auction.place_bid(
-                        message["user"],
+                        user,
                         message["amount"]
                     ):
 
                         broadcast({
                             "type": "NEW_BID",
                             "auction_id": auction.auction_id,
-                            "user": message["user"],
+                            "user": user,
                             "amount": message["amount"],
                             "time_left": auction.time_left
                         })
