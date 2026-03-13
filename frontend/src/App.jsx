@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { useState } from "react"
 
 import Home from "./pages/Home"
 import AuctionPage from "./pages/AuctionPage"
@@ -7,18 +8,33 @@ import Login from "./pages/Login"
 
 function App()
 {
-  const user = localStorage.getItem("auction_user")
+  const [user, setUser] = useState(sessionStorage.getItem("auction_user"))
+
+  function handleLogin(username)
+  {
+    sessionStorage.setItem("auction_user", username)
+    setUser(username)
+  }
+
+  function handleLogout()
+  {
+    sessionStorage.removeItem("auction_user")
+    setUser(null)
+  }
 
   return (
     <BrowserRouter>
 
       <Routes>
 
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login onLogin={handleLogin} />}
+        />
 
         <Route
           path="/"
-          element={user ? <Home /> : <Navigate to="/login" />}
+          element={user ? <Home onLogout={handleLogout} /> : <Navigate to="/login" />}
         />
 
         <Route

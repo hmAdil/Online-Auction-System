@@ -1,10 +1,15 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-function Login()
+function Login({ onLogin })
 {
   const [username, setUsername] = useState("")
   const navigate = useNavigate()
+
+  useEffect(() =>
+  {
+    sessionStorage.removeItem("auction_user")
+  }, [])
 
   function handleLogin()
   {
@@ -14,9 +19,9 @@ function Login()
       return
     }
 
-    localStorage.setItem("auction_user", username)
+    onLogin(username)
 
-    window.location.href = "/"
+    navigate("/")
   }
 
   return (

@@ -7,6 +7,9 @@ function AuctionPage()
 {
   const [currentBid, setCurrentBid] = useState(0)
   const [history, setHistory] = useState([])
+  const [timeLeft, setTimeLeft] = useState(60)
+  const [highestBidder, setHighestBidder] = useState("")
+  const [auctionActive, setAuctionActive] = useState(true)
 
   useEffect(() =>
   {
@@ -20,16 +23,57 @@ function AuctionPage()
         {
           setCurrentBid(data.current_bid)
           setHistory(data.bid_history)
+          setTimeLeft(data.time_left)
+
+          setHighestBidder(data.highest_bidder)
+          setAuctionActive(data.active)
         }
 
         if (data.type === "NEW_BID")
         {
           setCurrentBid(data.amount)
+          setTimeLeft(data.time_left)
 
-          setHistory(prev => [
-            ...prev,
-            { user: data.user, amount: data.amount }
-          ])
+          setHighestBidder(data.user)
+
+          setHistory(prev =>
+          {
+            const lastBid = prev[prev.length - 1]
+
+            if (
+              lastBid &&
+              lastBid.user === data.user &&
+              lastBid.amount === data.amount
+            )
+            {
+              return prev
+            }
+
+            return [
+              ...prev,
+              {
+                user: data.user,
+                amount: data.amount
+              }
+            ]
+          })
+        }
+
+        if (data.type === "TIMER_UPDATE")
+        {
+          setTimeLeft(data.time_left)
+        }
+
+        if (data.type === "AUCTION_ENDED")
+        {
+          setAuctionActive(false)
+
+          alert(
+            "Auction ended!\nWinner: " +
+            data.winner +
+            " for ₹" +
+            data.amount
+          )
         }
       },
 
@@ -45,6 +89,7 @@ function AuctionPage()
 
   }, [])
 
+
   return (
     <div style={{ padding: "20px" }}>
 
@@ -52,7 +97,16 @@ function AuctionPage()
 
       <p>Current Bid: ₹{currentBid}</p>
 
-      <BidPanel sendMessage={sendMessage} />
+      <p>Highest Bidder: {highestBidder || "None"}</p>
+
+      <p>Time Remaining: {timeLeft}s</p>
+
+      <p>Minimum next bid: ₹{currentBid + 1000} (₹1000 increment)</p>
+
+      <BidPanel
+        sendMessage={sendMessage}
+        disabled={!auctionActive}
+      />
 
       <BidHistory history={history} />
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { connectSocket, sendMessage } from "../services/websocket"
 
-function Home()
+function Home({ onLogout })
 {
   const navigate = useNavigate()
 
@@ -47,7 +47,11 @@ function Home()
 
       <h2>Active Auctions</h2>
 
-      <div style={{ border: "1px solid gray", padding: "10px", margin: "10px" }}>
+      <button onClick={onLogout}>
+        Logout
+      </button>
+
+      <div style={{ border: "1px solid gray", padding: "10px", marginTop: "20px" }}>
 
         <h3>Gaming Laptop</h3>
 

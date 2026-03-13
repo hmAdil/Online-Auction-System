@@ -1,24 +1,33 @@
 import { useState } from "react"
 
-function BidPanel({ sendMessage })
+function BidPanel({ sendMessage, disabled })
 {
   const [amount, setAmount] = useState("")
 
   function placeBid()
   {
-    console.log("Bid button clicked")
+    const value = Number(amount)
 
-    const message =
+    if (!Number.isInteger(value))
     {
-      type: "BID",
-      auction_id: 1,
-      user: localStorage.getItem("auction_user"),
-      amount: Number(amount)
+      alert("Bids must be whole numbers")
+      return
     }
 
-    console.log("Sending message:", message)
+    if (value <= 0)
+    {
+      alert("Invalid bid amount")
+      return
+    }
 
-    sendMessage(message)
+    sendMessage({
+      type: "BID",
+      auction_id: 1,
+      user: sessionStorage.getItem("auction_user"),
+      amount: value
+    })
+
+    setAmount("")
   }
 
   return (
@@ -27,14 +36,26 @@ function BidPanel({ sendMessage })
       <h3>Place Bid</h3>
 
       <input
+        type="number"
+        step="1"
+        placeholder="Enter bid amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        placeholder="Enter bid amount"
+        disabled={disabled}
       />
 
-      <button onClick={placeBid}>
+      <button
+        onClick={placeBid}
+        disabled={disabled}
+      >
         Place Bid
       </button>
+
+      {disabled && (
+        <p style={{ color: "red" }}>
+          Auction has ended
+        </p>
+      )}
 
     </div>
   )
