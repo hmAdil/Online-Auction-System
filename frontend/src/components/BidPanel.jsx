@@ -1,62 +1,76 @@
 import { useState } from "react"
 
-function BidPanel({ sendMessage, disabled })
-{
+function BidPanel({ sendMessage, auctionId, user, disabled, currentBid }) {
   const [amount, setAmount] = useState("")
 
-  function placeBid()
-  {
-    const value = Number(amount)
+  const minBid = (currentBid || 0) + 1000
 
-    if (!Number.isInteger(value))
-    {
+  function placeBid() {
+    const raw = String(amount).trim()
+
+    if (!raw) {
+      alert(`Enter a bid amount (minimum ₹${minBid.toLocaleString()})`)
+      return
+    }
+
+    const value = Number(raw)
+
+    if (!Number.isFinite(value) || Math.floor(value) !== value) {
       alert("Bids must be whole numbers")
       return
     }
 
-    if (value <= 0)
-    {
-      alert("Invalid bid amount")
+    if (value < minBid) {
+      alert(`Minimum bid is ₹${minBid.toLocaleString()}`)
       return
     }
 
     sendMessage({
       type: "BID",
-      auction_id: 1,
-      user: sessionStorage.getItem("auction_user"),
-      amount: value
+      auction_id: auctionId,
+      user,
+      amount: Math.floor(value)
     })
 
     setAmount("")
   }
 
+  function handleKey(e) {
+    if (e.key === "Enter") placeBid()
+  }
+
   return (
-    <div style={{ marginTop: "20px" }}>
+    <div className="bid-panel">
+      <div className="bid-panel-title">Place a Bid</div>
 
-      <h3>Place Bid</h3>
+      <div className="bid-input-wrap">
+        <span className="bid-currency">₹</span>
+        <input
+          className="bid-input"
+          type="number"
+          step="1000"
+          min={minBid}
+          placeholder={minBid.toLocaleString()}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          onKeyDown={handleKey}
+          disabled={disabled}
+        />
+      </div>
 
-      <input
-        type="number"
-        step="1"
-        placeholder="Enter bid amount"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        disabled={disabled}
-      />
+      <p className="bid-hint">
+        Minimum next bid: <strong>₹{minBid.toLocaleString()}</strong>
+      </p>
 
-      <button
-        onClick={placeBid}
-        disabled={disabled}
-      >
-        Place Bid
+      <button className="btn-bid" onClick={placeBid} disabled={disabled}>
+        {disabled ? "Auction Ended" : "Confirm Bid"}
       </button>
 
       {disabled && (
-        <p style={{ color: "red" }}>
-          Auction has ended
-        </p>
+        <div className="auction-ended-badge">
+          ■ &nbsp;This auction has closed
+        </div>
       )}
-
     </div>
   )
 }

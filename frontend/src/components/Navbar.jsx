@@ -1,34 +1,28 @@
-import { Link } from "react-router-dom"
-
-function Navbar()
-{
-  const user = localStorage.getItem("auction_user")
-
-  function logout()
-  {
-    localStorage.removeItem("auction_user")
-    window.location.href = "/login"
-  }
-
+function Navbar({ user, onLogout, onHome, onProfile, page }) {
   return (
-    <div style={{ borderBottom: "1px solid gray", padding: "10px" }}>
+    <nav className="navbar">
+      <div className="navbar-logo">
+        Animus
+      </div>
 
-      <h1>Online Auction Engine</h1>
+      <div className="navbar-links">
+        <button className={`nav-btn ${page === "home" ? "active" : ""}`} onClick={onHome}>
+          Auctions
+        </button>
+        <button className={`nav-btn ${page === "profile" ? "active" : ""}`} onClick={onProfile}>
+          My Bids
+        </button>
+      </div>
 
-      <Link to="/">Home</Link> | <Link to="/profile">Profile</Link>
-
-      <span style={{ marginLeft: "20px" }}>
-        Logged in as: <b>{user}</b>
-      </span>
-
-      <button
-        style={{ marginLeft: "20px" }}
-        onClick={logout}
-      >
-        Logout
-      </button>
-
-    </div>
+      <div className="navbar-right">
+        <span className="navbar-user">
+          Signed in as <strong>{user}</strong>
+        </span>
+        <button className="btn-logout" onClick={onLogout}>
+          Sign Out
+        </button>
+      </div>
+    </nav>
   )
 }
 
