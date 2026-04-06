@@ -2,6 +2,8 @@ import asyncio
 import websockets
 import socket
 import json
+import ssl
+import sys
 
 TCP_HOST = "127.0.0.1"
 TCP_PORT = 5000
@@ -12,6 +14,12 @@ async def handle_websocket(websocket):
     print(f"Web client connected: {websocket.remote_address}")
 
     tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    if "--ssl" in sys.argv:
+        # Connect to self-signed certs securely
+        context = ssl._create_unverified_context()
+        tcp_socket = context.wrap_socket(tcp_socket, server_hostname=TCP_HOST)
+
     try:
         tcp_socket.connect((TCP_HOST, TCP_PORT))
     except ConnectionRefusedError:

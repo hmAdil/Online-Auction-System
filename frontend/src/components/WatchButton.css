@@ -1,0 +1,47 @@
+.watch-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.watch-button:hover {
+  border-color: var(--red);
+  color: var(--red);
+  transform: scale(1.1);
+}
+
+.watch-button.watching {
+  background: rgba(224, 92, 92, 0.15);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.watch-button.watching:hover {
+  background: rgba(224, 92, 92, 0.25);
+}
+
+.watch-count {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: var(--gold);
+  color: #0a0a0a;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}

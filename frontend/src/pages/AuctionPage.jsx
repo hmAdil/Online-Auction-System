@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import BidPanel from "../components/BidPanel"
 import BidHistory from "../components/BidHistory"
+import WatchButton from "../components/WatchButton"
+import "./AuctionPage.css"
 
 function formatTime(s) {
   if (s <= 0) return "0s"
@@ -21,6 +23,8 @@ function AuctionPage({ sendMessage, user, message, auctionId, onBack }) {
     time_left: 0,
     active: true
   })
+  const [prevLeader, setPrevLeader] = useState(null)
+  const [showOutbidToast, setShowOutbidToast] = useState(false)
 
   useEffect(() => {
     sendMessage({ type: "GET_AUCTION", auction_id: auctionId })
@@ -38,6 +42,12 @@ function AuctionPage({ sendMessage, user, message, auctionId, onBack }) {
 
     if (message.type === "AUCTION_STATE") {
       setAuction(message)
+      if (message.highest_bidder !== prevLeader && message.highest_bidder !== user && prevLeader === user) {
+        // User was outbid
+        setShowOutbidToast(true)
+        setTimeout(() => setShowOutbidToast(false), 4000)
+      }
+      setPrevLeader(message.highest_bidder)
     }
 
     if (message.type === "NEW_BID") {
@@ -50,6 +60,12 @@ function AuctionPage({ sendMessage, user, message, auctionId, onBack }) {
           { user: message.user, amount: message.amount }
         ]
       }))
+
+      if (message.user !== user && prevLeader === user) {
+        setShowOutbidToast(true)
+        setTimeout(() => setShowOutbidToast(false), 4000)
+      }
+      setPrevLeader(message.user)
     }
 
     if (message.type === "TIMER_UPDATE") {
@@ -60,62 +76,128 @@ function AuctionPage({ sendMessage, user, message, auctionId, onBack }) {
       }))
     }
 
+    if (message.type === "BULK_TIMER_UPDATE") {
+      const update = message.updates.find(u => u.auction_id === auctionId)
+      if (update) {
+        setAuction(prev => ({
+          ...prev,
+          time_left: update.time_left,
+          active: update.active !== undefined ? update.active : prev.active
+        }))
+      }
+    }
+
     if (message.type === "AUCTION_ENDED") {
       setAuction(prev => ({ ...prev, active: false, time_left: 0 }))
     }
-  }, [message, auctionId])
+  }, [message, auctionId, user])
 
   const urgent = auction.active && auction.time_left <= 10
+  const isWinning = auction.highest_bidder === user
+  const auctionEnded = !auction.active
 
   return (
     <div>
-      <button className="btn-back" onClick={onBack}>
-        ← Back to Auctions
+      <button className="btn-back-luxe" onClick={onBack}>
+        <span className="arrow">←</span> Back to Market
       </button>
 
-      <div className="auction-page">
+      <div className="auction-page-layout">
         {/* Left: main info + history */}
-        <div className="auction-main">
-          <div className="card-status" style={{ marginBottom: "12px" }}>
-            <span className={`status-dot ${auction.active ? "live" : "ended"}`} />
-            <span style={{ color: auction.active ? "var(--green)" : "var(--text-dim)", fontSize: "11px", letterSpacing: "0.1em" }}>
+        <div className="auction-main-content glass-panel">
+          <div className="auction-status-bar">
+            <div className={`status-pill ${auction.active ? 'live' : 'ended'}`}>
+              <span className={`status-dot ${auction.active ? "live" : "ended"}`} />
               {auction.active ? "Live Auction" : "Auction Ended"}
-            </span>
+            </div>
+            {isWinning && auction.active && (
+              <div className="winning-badge pulse-glow">
+                🏆 Top Bidder
+              </div>
+            )}
+            {!auction.active && isWinning && (
+              <div className="won-badge shine">
+                🎉 Auction Won
+              </div>
+            )}
           </div>
 
-          <h1 className="auction-item-name">{auction.item}</h1>
+          <div className="auction-header-row">
+            <div>
+              <h1 className="item-display-title">{auction.item}</h1>
+              {auction.category && (
+                <span className="card-category" style={{marginTop: "0.5rem"}}>
+                   {auction.category}
+                </span>
+              )}
+            </div>
+            <WatchButton 
+              auctionId={auctionId} 
+              initialWatched={JSON.parse(localStorage.getItem("watchlist") || "[]").includes(auctionId)} 
+            />
+          </div>
 
-          <div className="auction-meta">
-            <div className="meta-cell">
-              <div className="meta-label">Current Bid</div>
-              <div className="meta-value">₹{auction.current_bid.toLocaleString()}</div>
+          <div className="auction-stats-lux">
+            <div className="stat-lux-box">
+              <span className="stat-lux-label">Current Valuation</span>
+              <span className="stat-lux-value gold">₹{auction.current_bid.toLocaleString()}</span>
             </div>
-            <div className="meta-cell">
-              <div className="meta-label">Time Remaining</div>
-              <div className={`meta-value timer ${urgent ? "urgent" : ""}`}>
-                {auction.active ? formatTime(auction.time_left) : "Ended"}
-              </div>
+            <div className="stat-lux-box">
+              <span className="stat-lux-label">Time Remaining</span>
+              <span className={`stat-lux-value ${urgent ? "critical-text" : ""}`}>
+                {auction.active ? formatTime(auction.time_left) : "Closed"}
+              </span>
             </div>
-            <div className="meta-cell">
-              <div className="meta-label">Leading Bidder</div>
-              <div className="meta-value plain">
-                {auction.highest_bidder || "—"}
-              </div>
+            <div className="stat-lux-box">
+              <span className="stat-lux-label">Leading Bidder</span>
+              <span className="stat-lux-value plain">
+                {auction.highest_bidder || "None"}
+              </span>
             </div>
           </div>
 
-          <BidHistory bids={auction.bid_history} />
+          <div className="auction-history-section">
+             <BidHistory bids={auction.bid_history} currentUser={user} />
+          </div>
         </div>
 
         {/* Right: bid panel */}
-        <BidPanel
-          sendMessage={sendMessage}
-          auctionId={auctionId}
-          user={user}
-          disabled={!auction.active}
-          currentBid={auction.current_bid}
-        />
+        <div className="auction-sidebar">
+          <BidPanel
+            sendMessage={sendMessage}
+            auctionId={auctionId}
+            user={user}
+            disabled={!auction.active}
+            currentBid={auction.current_bid}
+          />
+        </div>
       </div>
+
+      {/* Outbid notification */}
+      {showOutbidToast && (
+        <div className="outbid-toast glass-panel">
+          <span className="outbid-icon">⚡</span>
+          <div className="outbid-content">
+            <strong>Outbid!</strong>
+            <p>A higher bid was placed on {auction.item}</p>
+          </div>
+          <button
+            className="btn-quick-bid-back"
+            onClick={() => {
+              const minBid = auction.current_bid + 1000
+              sendMessage({
+                type: "BID",
+                auction_id: auctionId,
+                user,
+                amount: minBid
+              })
+              setShowOutbidToast(false)
+            }}
+          >
+            Bid Back
+          </button>
+        </div>
+      )}
     </div>
   )
 }

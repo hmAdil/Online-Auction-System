@@ -1,0 +1,197 @@
+.admin-tabs {
+  display: flex;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  width: fit-content;
+}
+
+.admin-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s var(--transition-smooth);
+}
+
+.admin-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.admin-tab.active {
+  background: var(--bg-surface-2);
+  color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--glass-border);
+}
+
+.admin-tab-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-weight: 800;
+}
+
+.admin-tab-badge.pulse {
+  background: var(--gold);
+  color: var(--bg-deep);
+  animation: badgePulse 2s infinite;
+}
+
+.admin-tab-badge.secondary {
+  background: var(--bg-surface-2);
+  color: var(--text-dim);
+  border: 1px solid var(--glass-border);
+}
+
+@keyframes badgePulse {
+  0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+/* Request Cards */
+.admin-request-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.admin-request-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border-radius: 16px;
+}
+
+.admin-request-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.admin-request-item {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.admin-request-meta {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.admin-request-meta span {
+  color: var(--gold);
+}
+
+.admin-request-bid {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.admin-request-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border-left: 3px solid var(--gold-dim);
+}
+
+.admin-request-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-req-tags {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.req-tag {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.admin-request-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-approve-small, .btn-reject-small {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.btn-approve-small {
+  background: var(--gold);
+  color: var(--bg-deep);
+}
+
+.btn-reject-small {
+  background: transparent;
+  color: var(--rose);
+  border: 1px solid var(--rose-glow);
+}
+
+/* Inventory List */
+.admin-auction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-auction-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+}
+
+.admin-auction-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.admin-auction-meta {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-delete-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rose-glow);
+  color: var(--rose);
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.btn-delete-icon:hover {
+  background: var(--rose);
+  color: white;
+}

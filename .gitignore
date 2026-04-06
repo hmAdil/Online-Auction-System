@@ -1,0 +1,91 @@
+# Online Auction System - Consolidated .gitignore
+
+# -----------------------------------------------------------------------------
+# Assistant / Agent Files
+# -----------------------------------------------------------------------------
+.agent/
+.gemini/
+
+# -----------------------------------------------------------------------------
+# Logs and temporary files
+# -----------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.tmp
+*.temp
+
+# -----------------------------------------------------------------------------
+# Frontend (Vite / React / Node)
+# -----------------------------------------------------------------------------
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+dist-ssr/
+frontend/dist-ssr/
+*.local
+frontend/.eslintcache
+
+# -----------------------------------------------------------------------------
+# Python (Server / Web Bridge / Root Scripts)
+# -----------------------------------------------------------------------------
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+Pipfile.lock
+poetry.lock
+
+# -----------------------------------------------------------------------------
+# Security and Credentials
+# -----------------------------------------------------------------------------
+auction_server/certs/*.key
+auction_server/certs/*.crt
+auction_server/certs/*.pem
+*.pem
+*.key
+*.crt
+**/*.key
+**/*.crt
+
+# -----------------------------------------------------------------------------
+# Operating System Files
+# -----------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# -----------------------------------------------------------------------------
+# IDEs and Editors
+# -----------------------------------------------------------------------------
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swo
+.project
+.settings/
+.classpath

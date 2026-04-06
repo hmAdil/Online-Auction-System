@@ -2,7 +2,10 @@ let socket = null
 
 export function connectSocket(onMessage, onOpen)
 {
-  socket = new WebSocket("ws://localhost:8000")
+  // Dynamically get the host so multi-device testing works!
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsHost = window.location.hostname;
+  socket = new WebSocket(`${wsProtocol}//${wsHost}:8000`)
 
   socket.onopen = () =>
   {
