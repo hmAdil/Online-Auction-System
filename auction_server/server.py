@@ -456,7 +456,7 @@ def start_server(use_ssl=False):
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind((HOST, PORT))
         server.listen()
-        print(f"⚠️  TCP Server running on {HOST}:{PORT} (NOT ENCRYPTED)")
+        print(f"✅ TCP Server running on {HOST}:{PORT}")
 
     print(f"Admin username: {ADMIN}")
 

@@ -20,12 +20,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo [1/3] Starting Secure TCP Auction Server...
-start "TCP Server (SSL)" cmd /k "python auction_server/server.py --ssl"
+echo [1/3] Starting TCP Auction Server...
+start "TCP Server" cmd /k "python auction_server/server.py"
 timeout /t 2 /nobreak >nul
 
-echo [2/3] Starting Secure WebSocket Bridge...
-start "WebSocket Bridge" cmd /k "python web_bridge/bridge.py --ssl"
+echo [2/3] Starting WebSocket Bridge...
+start "WebSocket Bridge" cmd /k "python web_bridge/bridge.py"
 timeout /t 5 /nobreak >nul
 
 echo [3/3] Building and Starting React Frontend on Network...
@@ -34,7 +34,7 @@ start "Frontend (Network)" cmd /k "cd frontend && echo Building frontend... && n
 echo.
 echo ============================================
 echo   All servers starting up...
-echo   - TCP Server:    127.0.0.1:5000 (Encrypted)
+echo   - TCP Server:    127.0.0.1:5000
 echo   - WebSocket:     0.0.0.0:8000
 echo   - Frontend:      Please check the 'Frontend' terminal for your local IP
 echo ============================================

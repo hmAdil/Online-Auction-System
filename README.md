@@ -2,6 +2,27 @@
 
 A modern, real-time online auction platform with TCP socket backend, React frontend, and comprehensive security features.
 
+## Quick Start
+
+**Windows:**
+```bash
+start_secure_network.bat
+```
+
+**Manual (3 terminals):**
+```bash
+# Terminal 1 - TCP Auction Server
+python auction_server/server.py
+
+# Terminal 2 - WebSocket Bridge
+python web_bridge/bridge.py
+
+# Terminal 3 - React Frontend
+cd frontend && npm run dev
+```
+
+Access: `http://localhost:5173` | Admin: `hmAdil`
+
 ## Features
 
 ### Core Functionality
@@ -14,7 +35,6 @@ A modern, real-time online auction platform with TCP socket backend, React front
 ### Security Features
 - **Password hashing** using PBKDF2-SHA256 with salt
 - **Rate limiting** - 10 messages/second, 20 bids/minute per user
-- **SSL/TLS support** (optional, with self-signed certificates)
 - **Input validation** on all endpoints
 
 ### User Experience
@@ -64,24 +84,6 @@ pip install -r requirements.txt
 # Linux: sudo systemctl start mongod
 ```
 
-### Running the Application
-
-You need **3 terminals**:
-
-```bash
-# Terminal 1 - TCP Auction Server
-python auction_server/server.py
-
-# Terminal 2 - WebSocket Bridge (connects browser to TCP server)
-python web_bridge/bridge.py
-
-# Terminal 3 - React Frontend
-cd frontend
-npm run dev
-```
-
-Then open `http://localhost:5173` in your browser.
-
 ### Frontend Setup
 
 ```bash
@@ -95,6 +97,9 @@ npm run dev
 
 # Build for production
 npm run build
+
+# Preview production build
+npm run preview
 ```
 
 ## Load Testing
